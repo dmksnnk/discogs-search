@@ -1,5 +1,5 @@
 from unittest.mock import patch
-from discogs_client import DiscogsClient
+from discogs_search import DiscogsClient
 from config import USER_AGENT, TOKEN
 
 
