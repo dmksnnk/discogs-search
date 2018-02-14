@@ -1,7 +1,6 @@
 import pytest
-from discogs_client import DiscogsClient
+from discogs_search import DiscogsClient
 from config import TOKEN, USER_AGENT
-
 
 
 _search_results = {'pagination':
