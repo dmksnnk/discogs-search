@@ -43,8 +43,10 @@ class DiscogsClient():
         return self._get_request('https://api.discogs.com/database/search', params)
 
     def _get_request(self, url, params=None):
-        """Sends GET request to """
-        logger.debug('Sending request with params %s', params)
+        """Sends GET request to URL.
+        Cheks for Ratelimit, if reach - waits for Retry-After seconds.
+        """
+        logger.debug('Sending request to %s with params %s', url, params)
         headers = {'user-agent': self.name}
         # if params aren't set
         if params is None:
