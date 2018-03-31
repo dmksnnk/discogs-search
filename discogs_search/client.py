@@ -24,7 +24,7 @@ class DiscogsClient():
         search_result = self._search(artist, type='artist')
         return  search_result.get('results')
 
-    def get_artist_releases(self, artist_id):
+    def get_releases(self, artist_id):
         """Get releases for given artist id.
 
         :param artist_id: Artist id, can be found using ``search_artist``
@@ -44,7 +44,7 @@ class DiscogsClient():
 
     def _get_request(self, url, params=None):
         """Sends GET request to URL.
-        Cheks for Ratelimit, if reach - waits for Retry-After seconds.
+        Checks for Ratelimit, if reach - waits for Retry-After seconds.
         """
         logger.debug('Sending request to %s with params %s', url, params)
         headers = {'user-agent': self.name}
