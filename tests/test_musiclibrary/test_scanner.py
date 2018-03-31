@@ -1,20 +1,20 @@
 import shutil
 from pathlib import Path
 import pytest
-from discogs_search.musiclibrary import scanner
+from discogs_search.musiclibrary.scanner import Scanner
 
 
 @pytest.fixture(scope='module')
 def create_folders():
     """Create folders before test"""
     basedir = Path('testlibrary').absolute()
-    paths = ['folder1/file1.txt',
-             'folder2/folder21/file2.txt',
+    paths = ['artist1/1950 album1/song1.mp3',
+             'somefolder/artist1/1950 album2/song2.mp3',
              'empptyfolder/emptyfolder11/',
              'emptyfolder2',
              'file3.txt',
-             'folder4/file4.TXT',
-             'folder5/incorrectfile.aaa']
+             '1950 album/song.mp3',
+             'some/deep/folder/111 artist/1950 album/somefile.aaa']
     for path in paths:
         # if it is just directory
         if '.' not in path:
@@ -27,23 +27,14 @@ def create_folders():
     shutil.rmtree(basedir)
 
 
-def test__isformat():
-    files = ['a.txt', 'a.TXT', 'a.Txt']
-    for f in files:
-        assert scanner._isformat(f, ['txt']) is True
 
-    files = ['a.aaa', 'txt', 'aTXT', 'txt.a']
-    for f in files:
-        assert scanner._isformat(f, ['txt']) is False
-
-
-def test_folders_scanner(create_folders):
+def test_scan_folder(create_folders):
     basedir = create_folders
-    formats = ['txt']
-    scan_result = [(str(basedir.joinpath('folder1')), 'file1.txt',),
-                   (str(basedir.joinpath('folder2/folder21')), 'file2.txt',),
-                   (str(basedir), 'file3.txt',),
-                   (str(basedir.joinpath('folder4')), 'file4.TXT',)]
-    assert set(scan_result) == set(scanner.scan(str(basedir), formats))
+    sc = Scanner(str(basedir), '%A/%Y %a')
+    scan_result = [{'artist': 'artist1', 'year': '1950', 'album': 'album1'},
+                   {'artist': 'artist1', 'year': '1950', 'album': 'album2'},
+                   {'artist': '111 artist', 'year': '1950', 'album': 'album'}]
+
+    assert scan_result.sort(key=lambda x: x['artist']) == list(sc.scan()).sort(key=lambda x: x['artist'])
 
 
