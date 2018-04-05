@@ -53,8 +53,8 @@ class Scanner:
 
         :Example:
 
-        >>> for song_data in Scanner('home/music', '%A/%a (%Y)').scan():
-        ...     print(song_data)
+        >>> for album_data in Scanner('home/music', '%A/%a (%Y)').scan():
+        ...     print(album_data)
         {'year': '1990', 'artist': 'Kyuss', 'album': 'Sons of Kyuss'}
         {'year': '1990', 'artist': 'Kyuss', 'album': 'Sons of Kyuss'}
         ...
