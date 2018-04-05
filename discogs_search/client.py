@@ -17,6 +17,11 @@ class DiscogsClient():
 
 
     def __init__(self, name, token):
+        """Initialization.
+
+        :param name: some USER_AGENT name
+        :param token: app token from Discogs
+        """
         self.name = name
         self._token = token
 
