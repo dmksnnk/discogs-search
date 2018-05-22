@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Simple socketio</title>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.0/socket.io.slim.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+    var socket = io.connect('http://' + document.domain  + ':' + location.port);
+    socket.on('connect', function(){
+        socket.emit('connected', {data: 'Connected!'});
+    });
+
+</script>
+
+<form method="POST">
+    <input type="text" name="path" placeholder="Path to folder here">
+    <input type="submit" value="Start scanning">
+</form>
+
+
+
+</body>
+</html>

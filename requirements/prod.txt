@@ -1,2 +1,5 @@
 requests
 tinydb
+flask
+flask-socketio
+eventlet
