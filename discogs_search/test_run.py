@@ -31,22 +31,21 @@ client = DiscogsClient(config.USER_AGENT, config.TOKEN)
 missed_albums_db = TinyDB('missed_albums.json')
 # get unique artists
 artists = {album_data['artist'] for album_data in iter(db)}
-
 # for artist in list(artists)[:10]:
 for artist in artists:
     try:
-        found_artists = client.search_artist(artist)
+        artist_results = client.search_artist(artist)
     except DiscogsClient.RequestFailedError as e:
         # TODO: try do request again
         logger.error(e)
         continue
 
-    if not found_artists:
+    if not artist_results:
         logger.warning('Can\'t find {}'.format(artist))
         continue
 
     # first artist is the most similar to what we are searching for
-    artist_id = found_artists[0]['id']
+    artist_id = artist_results[0]['id']
     try:
         releases = client.get_releases(artist_id)
     except DiscogsClient.RequestFailedError as e:
@@ -54,21 +53,18 @@ for artist in artists:
         logger.error(e)
         continue
     # get only `Main` releases, not interested in `TrackAppearance`
-    main_releases = [release for release in releases if release['role'] == 'Main']
+    discogs_main_releases = [release for release in releases if release['role'] == 'Main']
     # albums of artist
-    local_artist_albums = [album_data['album'] for album_data in db.search(where('artist') == artist)]
+    local_albums = [album_data['album'] for album_data in db.search(where('artist') == artist)]
     # comparing
-    for mr in main_releases:
-        is_missed = True
-        for album in local_artist_albums:
-            if is_equal(album, mr['title']):
-                logger.info('++: {} - {}'.format(artist, album))
-                is_missed = False
-                break
-
-        if is_missed:
-            logger.info('--: {} - {}'.format(artist, mr['title']))
-            missed_albums_db.insert(mr)
+    for discogs_release in discogs_main_releases:
+        discogs_title = discogs_release['title']
+        # if found in local albums - mark as found
+        if any(is_equal(album, discogs_title) for album in local_albums):
+            logger.info('++: {} - {}'.format(artist, discogs_title))
+        else:
+            logger.info('--: {} - {}'.format(artist, discogs_title))
+            missed_albums_db.insert(discogs_release)
 
 # print(missed_albums)
 
